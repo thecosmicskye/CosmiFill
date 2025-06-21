@@ -1,0 +1,104 @@
+# CosmiFill Configuration File
+# This file allows customization of extraction patterns, field mappings, and other settings
+
+extraction_patterns:
+  # Date patterns - add or modify patterns to match your date formats
+  dates:
+    - '\b\d{1,2}/\d{1,2}/\d{2,4}\b'              # MM/DD/YYYY or MM/DD/YY
+    - '\b\d{1,2}-\d{1,2}-\d{2,4}\b'              # MM-DD-YYYY or MM-DD-YY
+    - '\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2},? \d{4}\b'  # Month DD, YYYY
+    - '\b\d{4}-\d{2}-\d{2}\b'                    # YYYY-MM-DD (ISO format)
+    
+  # Email patterns
+  emails:
+    - '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    
+  # Phone number patterns - customize for your region
+  phones:
+    - '\b\d{3}[-.]?\d{3}[-.]?\d{4}\b'           # XXX-XXX-XXXX or XXX.XXX.XXXX
+    - '\(\d{3}\)\s*\d{3}[-.]?\d{4}'             # (XXX) XXX-XXXX
+    - '\b\d{10}\b'                               # XXXXXXXXXX
+    - '\b\+1[-.]?\d{3}[-.]?\d{3}[-.]?\d{4}\b'   # +1-XXX-XXX-XXXX (US international)
+    
+  # Amount/currency patterns
+  amounts:
+    - '\$\s*(\d+(?:,\d{3})*(?:\.\d{2})?)'       # $X,XXX.XX
+    - '(\d+(?:,\d{3})*(?:\.\d{2})?)\s*(?:USD|dollars?)'  # X,XXX.XX USD/dollars
+    
+  # Generic ID/reference patterns - these will be extracted as key-value pairs
+  # Examples: Order #12345, Reference: ABC-123, Case ID: XYZ789
+  # Note: These are now handled by the generic key-value extraction
+
+# Field mapping configurations
+field_mappings:
+  # Common field name variations
+  common_variations:
+    first_name:
+      - first_name
+      - firstname
+      - fname
+      - given_name
+      - applicant_first_name
+    last_name:
+      - last_name
+      - lastname
+      - lname
+      - surname
+      - family_name
+      - applicant_last_name
+    email:
+      - email
+      - email_address
+      - e-mail
+      - mail
+      - electronic_mail
+    phone:
+      - phone
+      - telephone
+      - tel
+      - phone_number
+      - mobile
+      - cell
+      - contact_number
+    date_of_birth:
+      - dob
+      - birthdate
+      - birth_date
+      - date_of_birth
+      - applicant_dob
+    # Generic ID fields - adapt based on your forms
+    id_number:
+      - id
+      - id_number
+      - reference
+      - reference_number
+      - case_number
+      - order_number
+      - tracking_number
+      - confirmation_number
+
+# PDF processing settings
+pdf_settings:
+  flatten_forms: false                    # Whether to flatten forms after filling
+  max_field_length: 1000                  # Maximum characters per field
+  timestamp_format: '%Y%m%d_%H%M%S'       # Format for output file timestamps
+  output_suffix: '_filled'                # Suffix for filled PDF files
+
+# Logging configuration
+logging:
+  level: INFO                             # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+# Claude integration settings
+claude_integration:
+  timeout_seconds: 300                    # Timeout for Claude sessions
+  max_retries: 3                          # Maximum retry attempts
+  permissions:
+    allow_patterns:
+      - 'Bash(python*)'
+      - 'Read(*)'
+      - 'Write(*)'
+      - 'Edit(*)'
+      - 'Bash(ls:*)'
+      - 'Bash(cat:*)'
+      - 'Bash(pwd)'

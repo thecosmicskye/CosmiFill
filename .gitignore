@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CosmiFill specific
+Test/
+test_*/
+*_filled*.pdf
+*_sessions_*.pdf
+.cosmifill_*
+COSMIFILL_ANALYSIS.json
+cosmifill_setup.py
+
+# Claude
+.claude/settings.local.json
+.claude/
+
+# Personal data
+*personal*
+*private*
+
+# Logs
+*.log
+
+# Local development
+.env
+.env.local
+
+# Tests
+.coverage
