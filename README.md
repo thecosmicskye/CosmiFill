@@ -70,16 +70,6 @@ cosmifill <folder_path> --inspect filled_form.pdf
 3. **Claude Code takes over** with intelligent analysis and filling capabilities
 4. **You get perfectly filled PDFs** with smart data matching and calculations
 
-## Features
-
-- **Generic PDF support** - works with any fillable PDF
-- **Intelligent data extraction** from emails, documents, etc.
-- **Smart field matching** using context clues
-- **Automatic calculations** (e.g., unit prices from totals)
-- **Multi-form handling** when you have more data than form rows
-- **PDF verification** and correction capabilities
-- **Session management** for complex filling tasks
-
 ## Example Workflow
 
 ```bash
