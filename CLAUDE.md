@@ -90,3 +90,13 @@ When filling PDFs:
 - `PyPDF2`: PDF structure analysis
 - `click`: CLI framework
 - `rich`: Terminal formatting
+
+### Testing Recommendations
+
+- Use the screen command when running the application for testing. That's the only way to get it to open the window properly
+- Screen command for UI testing:
+  - `screen -dmS cosmifill-ui bash -c 'npm start > /tmp/cosmifill-output.log 2>&1'`
+
+### Claude Guidelines
+
+- Always follow instructions exactly, don't make changes.
