@@ -1,0 +1,147 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: cosmifill-ui/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: cosmifill-ui
+      run: npm ci
+    
+    - name: Run linter
+      working-directory: cosmifill-ui
+      run: npm run lint
+    
+    - name: Run tests
+      working-directory: cosmifill-ui
+      run: npm test -- --coverage
+    
+    - name: Upload coverage
+      if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.x'
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./cosmifill-ui/coverage
+        flags: unittests
+        name: codecov-umbrella
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run security audit
+      working-directory: cosmifill-ui
+      run: npm audit --audit-level=moderate
+    
+    - name: Run Snyk Security Scan
+      uses: snyk/actions/node@master
+      with:
+        args: --severity-threshold=high
+        working-directory: cosmifill-ui
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      continue-on-error: true
+
+  build:
+    name: Build
+    needs: [test, security]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        cache-dependency-path: cosmifill-ui/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: cosmifill-ui
+      run: npm ci
+    
+    - name: Build application
+      working-directory: cosmifill-ui
+      run: npm run make
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cosmifill-${{ matrix.os }}
+        path: cosmifill-ui/out/
+        retention-days: 7
+
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        cache: 'npm'
+        cache-dependency-path: cosmifill-ui/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: cosmifill-ui
+      run: npm ci
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v3
+      with:
+        path: release-artifacts
+    
+    - name: Create release assets
+      run: |
+        cd release-artifacts
+        for dir in cosmifill-*; do
+          zip -r "${dir}.zip" "$dir"
+        done
+    
+    - name: Upload release assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: release-artifacts/*.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Publish to npm (if applicable)
+      working-directory: cosmifill-ui
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      continue-on-error: true
