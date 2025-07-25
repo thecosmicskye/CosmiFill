@@ -64,3 +64,4 @@ cosmifill_setup.py
 
 # Node.js
 node_modules/
+out/
