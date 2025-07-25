@@ -91,6 +91,9 @@ class DataExtractor:
         
         # Process each file in the folder
         for file_path in self.folder_path.rglob('*'):
+            # Skip hidden files (files starting with '.')
+            if file_path.name.startswith('.'):
+                continue
             if file_path.is_file() and file_path.suffix.lower() in ['.txt', '.email', '.pdf']:
                 self._process_file(file_path)
         
