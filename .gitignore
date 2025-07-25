@@ -61,3 +61,6 @@ cosmifill_setup.py
 
 # Tests
 .coverage
+
+# Node.js
+node_modules/
