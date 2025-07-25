@@ -43,6 +43,8 @@ test_*/
 .cosmifill_*
 COSMIFILL_ANALYSIS.json
 cosmifill_setup.py
+cosmifill-ui/
+
 
 # Claude
 .claude/settings.local.json
